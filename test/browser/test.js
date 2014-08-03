@@ -1,10 +1,10 @@
 var loan = objectify([
   {
-    name: 'minfico',
+    name: 'mincredit',
     source: 'credit-score'
   },
   {
-    name: 'maxfico',
+    name: 'maxcredit',
     source: 'credit-score + 20'
   },
   {
@@ -18,6 +18,6 @@ var loan = objectify([
 ]);
 
 
-$('input').on('change', function(){
+$('input').on('change keyup', function(){
   console.log(loan);
 });
