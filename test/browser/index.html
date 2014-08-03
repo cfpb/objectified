@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <title>Test runner</title>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    </head>
+    <body>
+
+        credit score: <input type="range" min="600" max="840" step="20" value="700" cf-formalize="credit-score"><br>
+
+        house price: <input type="text" placeholder="250,000" name="house-price" class="recalc" cf-formalize="house-price"><br>
+
+        <!-- #percent-down is #down-payment / #house-price * 100 -->
+        percent down: <input type="text" placeholder="10" name="percent-down" class="recalc down-calc" id="percent-down" cf-formalize="percent-down"><br>
+
+        down payment: <input type="text" placeholder="20,000" name="down-payment" class="recalc down-calc" id="down-payment" cf-formalize="down-payment"><br>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="https://rawgit.com/jdarling/Object.observe/master/Object.observe.poly.js"></script>
+        <script src="test.js"></script>
+    </body>
+</html>
