@@ -1,20 +1,20 @@
-# cf-formalize [![Build Status](https://secure.travis-ci.org/cfpb/cf-formalize.png?branch=master)](http://travis-ci.org/cfpb/cf-formalize)
+# cf-objectify [![Build Status](https://secure.travis-ci.org/cfpb/cf-objectify.png?branch=master)](http://travis-ci.org/cfpb/cf-objectify)
 
-> Bind HTML form inputs to a data model.
+> Bind HTML form inputs to a JavaScript object.
 
 ## Installation
 
 First install [node.js](http://nodejs.org/). Then:
 
 ```sh
-npm install cf-formalize --save
+npm install cf-objectify --save
 ```
 
 ## Usage
 
 ```javascript
-var cf-formalize = require('cf-formalize');
-cf-formalize.awesome(); // "awesome"
+var cf-objectify = require('cf-objectify');
+cf-objectify.awesome(); // "awesome"
 ```
 
 ## Contributing

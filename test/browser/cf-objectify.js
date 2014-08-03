@@ -1,3 +1,4 @@
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.formalize=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*
  * cf-objectify
  *
@@ -6,8 +7,8 @@
 
 'use strict';
 
-var debounce = require('debounce'),
-    unformatUSD = require('unformat-usd');
+var debounce = _dereq_('debounce'),
+    unformatUSD = _dereq_('unformat-usd');
 
 var objectifier = {},
     objectified = {},
@@ -140,3 +141,79 @@ for ( var i = 0, len = controllers.length; i < len; i++ ) {
 
 module.exports = objectify;
 module.exports.update = update;
+},{"debounce":2,"unformat-usd":4}],2:[function(_dereq_,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var now = _dereq_('date-now');
+
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @source underscore.js
+ * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
+ * @param {Function} function to wrap
+ * @param {Number} timeout in ms (`100`)
+ * @param {Boolean} whether to execute at the beginning (`false`)
+ * @api public
+ */
+
+module.exports = function debounce(func, wait, immediate){
+  var timeout, args, context, timestamp, result;
+  if (null == wait) wait = 100;
+
+  function later() {
+    var last = now() - timestamp;
+
+    if (last < wait && last > 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      if (!immediate) {
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+      }
+    }
+  };
+
+  return function debounced() {
+    context = this;
+    args = arguments;
+    timestamp = now();
+    var callNow = immediate && !timeout;
+    if (!timeout) timeout = setTimeout(later, wait);
+    if (callNow) {
+      result = func.apply(context, args);
+      context = args = null;
+    }
+
+    return result;
+  };
+};
+
+},{"date-now":3}],3:[function(_dereq_,module,exports){
+module.exports = Date.now || now
+
+function now() {
+    return new Date().getTime()
+}
+
+},{}],4:[function(_dereq_,module,exports){
+/**
+ * @param  {string} str  USD-formatted string to be converted into a number.
+ * @return {string}      The converted number OR the original argument if a 
+ *   string was not passed.
+ */
+var unFormatUSD = function( str ) {
+  return typeof str === 'string' ? parseFloat(str.replace(/[^0-9\.]/g,'')) || str : str;
+};
+
+module.exports = unFormatUSD;
+},{}]},{},[1])
+(1)
+});

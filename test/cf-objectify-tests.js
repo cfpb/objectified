@@ -1,6 +1,6 @@
 'use strict';
 
-var cfFormalize = require('../index.js');
+var cfObjectify = require('../index.js');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -22,7 +22,7 @@ var cfFormalize = require('../index.js');
     test.ifError(value)
 */
 
-exports.cfFormalize = {
+exports.cfObjectify = {
   setUp: function(done) {
     // setup here
     done();
@@ -30,7 +30,7 @@ exports.cfFormalize = {
   'no args': function(test) {
     test.expect(1);
     // tests here
-    test.equal(cfFormalize.awesome(), 'awesome', 'should be awesome.');
+    test.equal(cfObjectify.awesome(), 'awesome', 'should be awesome.');
     test.done();
   }
 };
