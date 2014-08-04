@@ -1,6 +1,6 @@
 # cf-objectify [![Build Status](https://secure.travis-ci.org/cfpb/cf-objectify.png?branch=master)](http://travis-ci.org/cfpb/cf-objectify)
 
-> Bind HTML form inputs to a JavaScript object.
+> Bind HTML form elements to a JavaScript object.
 
 ## Installation
 
@@ -48,13 +48,15 @@ var loan = objectify([
 ]);
 ```
 
-Whenever the user changes any of the HTML form elements, the `loan` object will be updated accordingly. If `credit-score` was slid to `700`, `500000` was typed into the `house-price` field and `10000` was typed into `down-payment`, `console.log(loan)` would produce:
+Whenever the user changes any of the HTML form elements, the `loan` object will be updated accordingly.
+
+For example, if *credit-score* was slid to '700', '500000' was typed into the *house-price* field and '10000' was typed into *down-payment*, `console.log(loan)` would produce:
 
 ```javascript
 {"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":2}
 ```
 
-Changing the `down-payment` field to `19000` results in:
+Changing the *down-payment* field to '19000' results in:
 
 ```javascript
 {"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":3.8}
