@@ -9,7 +9,7 @@ casper.test.begin('Main page test', 8, function suite(test) {
         this.sendKeys('[name=house-price]', '400000');
         test.assertField('house-price', '400000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":0}');
+            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":5,\"foo\":3}');
         });
     });
 
@@ -17,7 +17,7 @@ casper.test.begin('Main page test', 8, function suite(test) {
         this.sendKeys('[name=down-payment]', '10000');
         test.assertField('down-payment', '10000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":2.5}');
+            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":2.5,\"foo\":3}');
         });
     });
 
@@ -28,7 +28,7 @@ casper.test.begin('Main page test', 8, function suite(test) {
         this.sendKeys('[name=down-payment]', '4000');
         test.assertField('down-payment', '4000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":1}');
+            test.assertField('console', '{\"mincredit\":\"700\",\"maxcredit\":720,\"price\":\"400000\",\"percent-down\":1,\"foo\":3}');
         });
     });
 

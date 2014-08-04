@@ -5,8 +5,6 @@
  * A work of the public domain from the Consumer Financial Protection Bureau.
  */
 
-'use strict';
-
 var debounce = _dereq_('debounce'),
     unformatUSD = _dereq_('unformat-usd');
 
@@ -22,14 +20,15 @@ var objectifier = {},
 
 /**
  * Split source strings and taxonimize language.
- * @param  {string} str String to tokenize.
+ * @param  {string|function} src String to tokenize. If it's a function, leave it.
  * @return {array}      Array of objects, each a token.
  */
-function _tokenize( str ) {
+function _tokenize( src ) {
 
-  var arr = str.split(' '),
-      tokens = [],
+  var tokens = [],
       patterns;
+
+  src = typeof src !== 'string' ? src : src.split(' ');
 
   patterns = {
     operator: /^[+\-\*\/\%]$/, // +-*/%
@@ -45,14 +44,20 @@ function _tokenize( str ) {
     tokens.push( token );
   }
 
+  // Return early if it's a function.
+  if ( typeof src === 'function' ) {
+    _pushToken( src, 'function' );
+    return tokens;
+  }
+
   // @TODO DRY this up.
-  for ( var i = 0, len = arr.length; i < len; i++ ) {
-    if ( patterns.operator.test(arr[i]) ) {
-      _pushToken( arr[i].match(patterns.operator)[0], 'operator' );
-    } else if ( patterns.number.test(arr[i]) ) {
-      _pushToken( unformatUSD( arr[i].match(patterns.number)[0] ), 'number' );
+  for ( var i = 0, len = src.length; i < len; i++ ) {
+    if ( patterns.operator.test(src[i]) ) {
+      _pushToken( src[i].match(patterns.operator)[0], 'operator' );
+    } else if ( patterns.number.test(src[i]) ) {
+      _pushToken( unformatUSD( src[i].match(patterns.number)[0] ), 'number' );
     } else {
-      _pushToken( arr[i], 'name' );
+      _pushToken( src[i], 'name' );
     }
   }
   return tokens;
@@ -99,15 +104,24 @@ function _deTokenize( arr ) {
       tokens = [];
   for ( var i = 0, len = arr.length; i < len; i++ ) {
     var token = arr[i];
-    if ( token.type === 'operator' || token.type === 'number' ) {
+    // @TODO DRY this up.
+    if ( token.type === 'function' ) {
+      tokens.push( token.value );
+    } else if ( token.type === 'operator' || token.type === 'number' ) {
       tokens.push( token.value );
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
         el = _getDOMElement( arr[i].value );
-        tokens.push( el.value || 0 );
+        // Grab the value or the placeholder or default to 0.
+        el = unformatUSD( el.value || el.getAttribute('placeholder') || 0 );
+        tokens.push( el );
       } catch ( e ) {}
     }
+  }
+  // @TODO This feels a little repetitive.
+  if ( typeof tokens[0] === 'function' ) {
+    return tokens[0]();
   }
   return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
 }

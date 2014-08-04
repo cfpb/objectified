@@ -44,6 +44,12 @@ var loan = objectify([
   {
     name: 'percent-down-payment',
     source: 'down-payment / house-price * 100'
+  },
+  {
+    name: 'viewport-width',
+    source: function() {
+      return document.documentElement.clientWidth;
+    }
   }
 ]);
 ```
@@ -53,16 +59,16 @@ Whenever the user changes any of the HTML form elements, the `loan` object will 
 For example, if *credit-score* was slid to '700', '500000' was typed into the *house-price* field and '10000' was typed into *down-payment*, `console.log(loan)` would produce:
 
 ```javascript
-{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":2}
+{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":2,"viewport-width":705}
 ```
 
 Changing the *down-payment* field to '19000' results in:
 
 ```javascript
-{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":3.8}
+{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":3.8,"viewport-width":705}
 ```
 
-The `name` property defines the object's keys while the `source` property binds a key's value to an HTML form element. `source` can perform arithmetic operations to compute dynamic values.
+The `name` property defines the object's keys while the `source` property binds a key's value to an HTML form element. `source` can optionally perform arithmetic operations to compute dynamic values. You can also provide a callback that will be called whenever a field is changed.
 
 ## Contributing
 

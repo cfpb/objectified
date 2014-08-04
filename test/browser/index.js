@@ -14,6 +14,12 @@ var loan = objectify([
   {
     name: 'percent-down',
     source: 'down-payment / house-price * 100'
+  },
+  {
+    name: 'foo',
+    source: function() {
+      return $('input').length;
+    }
   }
 ]);
 
