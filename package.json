@@ -22,7 +22,8 @@
   ],
   "devDependencies": {
     "nodeunit": "~0.8.6",
-    "browserify": "^4.1.3"
+    "browserify": "^4.1.3",
+    "casperjs": "~1.1.0-beta3"
   },
   "scripts": {
     "test": "nodeunit test/cf-objectify-tests.js",
