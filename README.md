@@ -18,7 +18,7 @@ npm install cf-objectify --save
 
 ## Usage
 
-Add some HTML form elements to your page, e.g.:
+Add some HTML form elements to your page with a `cf-objectify` attribute, e.g.:
 
 ```html
 <input type="range" min="600" max="840" cf-objectify="credit-score">
