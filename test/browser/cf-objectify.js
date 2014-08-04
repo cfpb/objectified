@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.objectify=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/contolinic/Sites/capital-framework/cf-formalize/index.js":[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.objectify=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*
  * cf-objectify
  *
@@ -7,13 +7,24 @@
 
 'use strict';
 
-var debounce = require('debounce'),
-    unformatUSD = require('unformat-usd');
+var debounce = _dereq_('debounce'),
+    unformatUSD = _dereq_('unformat-usd');
 
+// The HTML attribute used for selecting inputs.
+var ATTR = 'cf-objectify';
+
+    // Stores references to elements that will be
 var objectifier = {},
+    // Stores final values that are sent to user.
     objectified = {},
+    // @TODO Use this object to cache references to elements.
     cachedElements = {};
 
+/**
+ * Split source strings and taxonimize language.
+ * @param  {string} str String to tokenize.
+ * @return {array}      Array of objects, each a token.
+ */
 function _tokenize( str ) {
 
   var arr = str.split(' '),
@@ -45,6 +56,7 @@ function _tokenize( str ) {
     }
   }
   return tokens;
+
 }
 
 /**
@@ -58,12 +70,12 @@ function _tokenize( str ) {
 // }
 
 /**
- * This only grabs the first applicable element.
- * @param  {[type]} str [description]
- * @return {[type]}     [description]
+ * Returns the first element matching the provided string.
+ * @param  {string} str Value to be provided to the selector.
+ * @return {object}     Element object.
  */
 function _getDOMElement( str ) {
-  var el = document.querySelector( '[cf-objectify=' + str + ']' );
+  var el = document.querySelector( '[' + ATTR + '=' + str + ']' );
   return el ? el : null;
 }
 
@@ -77,6 +89,11 @@ function _getDOMElement( str ) {
 //   type: "name"
 //   value: "down-payment"
 // }]
+/**
+ * [_deTokenize description]
+ * @param  {[type]} arr [description]
+ * @return {[type]}     [description]
+ */
 function _deTokenize( arr ) {
   var el,
       tokens = [];
@@ -95,6 +112,11 @@ function _deTokenize( arr ) {
   return eval( tokens.join(' ') );
 }
 
+/**
+ * [_parseSource description]
+ * @param  {[type]} source [description]
+ * @return {[type]}        [description]
+ */
 function _parseSource( source ) {
   var src = _tokenize( source );
   if ( src ) {
@@ -103,6 +125,11 @@ function _parseSource( source ) {
   return null;
 }
 
+/**
+ * [objectify description]
+ * @param  {[type]} props [description]
+ * @return {[type]}       [description]
+ */
 function objectify( props ) {
   var i,
       len;
@@ -119,35 +146,34 @@ function objectify( props ) {
   return objectified;
 }
 
+/**
+ * [update description]
+ * @return {[type]} [description]
+ */
 function update() {
   for (var key in objectifier) {
     objectified[ key ] = _deTokenize( objectifier[ key ] );
   }
 }
 
-var controllers = document.querySelectorAll('[cf-objectify]');
+var controllers = document.querySelectorAll('[' + ATTR + ']'),
+    len = controllers.length,
+    i = 0;
 
-for ( var i = 0, len = controllers.length; i < len; i++ ) {
-
-  controllers[i].addEventListener('change', function(){
-    update();
-  });
-
-  controllers[i].addEventListener('keyup', debounce(function(){
-    update();
-  }, 100));
-
+for ( ; i < len; i++ ) {
+  controllers[i].addEventListener('change', update);
+  controllers[i].addEventListener('keyup', debounce(update, 100));
 }
 
 module.exports = objectify;
 module.exports.update = update;
-},{"debounce":"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/debounce/index.js","unformat-usd":"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/unformat-usd/index.js"}],"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/debounce/index.js":[function(require,module,exports){
+},{"debounce":2,"unformat-usd":4}],2:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var now = require('date-now');
+var now = _dereq_('date-now');
 
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
@@ -196,14 +222,14 @@ module.exports = function debounce(func, wait, immediate){
   };
 };
 
-},{"date-now":"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/debounce/node_modules/date-now/index.js"}],"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/debounce/node_modules/date-now/index.js":[function(require,module,exports){
+},{"date-now":3}],3:[function(_dereq_,module,exports){
 module.exports = Date.now || now
 
 function now() {
     return new Date().getTime()
 }
 
-},{}],"/Users/contolinic/Sites/capital-framework/cf-formalize/node_modules/unformat-usd/index.js":[function(require,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 /**
  * @param  {string} str  USD-formatted string to be converted into a number.
  * @return {string}      The converted number OR the original argument if a 
@@ -214,5 +240,6 @@ var unFormatUSD = function( str ) {
 };
 
 module.exports = unFormatUSD;
-},{}]},{},["/Users/contolinic/Sites/capital-framework/cf-formalize/index.js"])("/Users/contolinic/Sites/capital-framework/cf-formalize/index.js")
+},{}]},{},[1])
+(1)
 });

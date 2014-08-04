@@ -17,7 +17,6 @@ var loan = objectify([
   }
 ]);
 
-
-$('input').on('change keyup', function(){
-  console.log(loan);
-});
+$('input').on('change keyup', debounce(function(){
+  console.log( loan );
+}, 300));
