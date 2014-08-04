@@ -28,7 +28,7 @@
   "scripts": {
     "test": "nodeunit test/cf-objectify-tests.js",
     "browser": "mkdir -p dist && browserify index.js -s objectify -o dist/cf-objectify.js",
-    "browser-test": "browserify index.js -s objectify -o test/browser/cf-objectify.js"
+    "browser-test": "browserify index.js -s objectify -o test/browser/cf-objectify.js && casperjs test test/browser/test.js"
   },
   "dependencies": {
     "debounce": "~1.0.0",

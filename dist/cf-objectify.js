@@ -10,10 +10,21 @@
 var debounce = _dereq_('debounce'),
     unformatUSD = _dereq_('unformat-usd');
 
+// The HTML attribute used for selecting inputs.
+var ATTR = 'cf-objectify';
+
+    // Stores references to elements that will be monitored.
 var objectifier = {},
+    // Stores final values that are sent to user.
     objectified = {},
+    // @TODO Use this object to cache references to elements.
     cachedElements = {};
 
+/**
+ * Split source strings and taxonimize language.
+ * @param  {string} str String to tokenize.
+ * @return {array}      Array of objects, each a token.
+ */
 function _tokenize( str ) {
 
   var arr = str.split(' '),
@@ -45,6 +56,7 @@ function _tokenize( str ) {
     }
   }
   return tokens;
+
 }
 
 /**
@@ -58,12 +70,12 @@ function _tokenize( str ) {
 // }
 
 /**
- * This only grabs the first applicable element.
- * @param  {[type]} str [description]
- * @return {[type]}     [description]
+ * Returns the first element matching the provided string.
+ * @param  {string} str Value to be provided to the selector.
+ * @return {object}     Element object.
  */
 function _getDOMElement( str ) {
-  var el = document.querySelector( '[cf-objectify=' + str + ']' );
+  var el = document.querySelector( '[' + ATTR + '=' + str + ']' );
   return el ? el : null;
 }
 
@@ -77,6 +89,11 @@ function _getDOMElement( str ) {
 //   type: "name"
 //   value: "down-payment"
 // }]
+/**
+ * [_deTokenize description]
+ * @param  {[type]} arr [description]
+ * @return {[type]}     [description]
+ */
 function _deTokenize( arr ) {
   var el,
       tokens = [];
@@ -95,6 +112,11 @@ function _deTokenize( arr ) {
   return eval( tokens.join(' ') );
 }
 
+/**
+ * [_parseSource description]
+ * @param  {[type]} source [description]
+ * @return {[type]}        [description]
+ */
 function _parseSource( source ) {
   var src = _tokenize( source );
   if ( src ) {
@@ -103,6 +125,11 @@ function _parseSource( source ) {
   return null;
 }
 
+/**
+ * [objectify description]
+ * @param  {[type]} props [description]
+ * @return {[type]}       [description]
+ */
 function objectify( props ) {
   var i,
       len;
@@ -119,24 +146,23 @@ function objectify( props ) {
   return objectified;
 }
 
+/**
+ * [update description]
+ * @return {[type]} [description]
+ */
 function update() {
   for (var key in objectifier) {
     objectified[ key ] = _deTokenize( objectifier[ key ] );
   }
 }
 
-var controllers = document.querySelectorAll('[cf-objectify]');
+var controllers = document.querySelectorAll('[' + ATTR + ']'),
+    len = controllers.length,
+    i = 0;
 
-for ( var i = 0, len = controllers.length; i < len; i++ ) {
-
-  controllers[i].addEventListener('change', function(){
-    update();
-  });
-
-  controllers[i].addEventListener('keyup', debounce(function(){
-    update();
-  }, 100));
-
+for ( ; i < len; i++ ) {
+  controllers[i].addEventListener('change', update);
+  controllers[i].addEventListener('keyup', debounce(update, 100));
 }
 
 module.exports = objectify;

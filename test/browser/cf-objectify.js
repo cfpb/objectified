@@ -13,7 +13,7 @@ var debounce = _dereq_('debounce'),
 // The HTML attribute used for selecting inputs.
 var ATTR = 'cf-objectify';
 
-    // Stores references to elements that will be
+    // Stores references to elements that will be monitored.
 var objectifier = {},
     // Stores final values that are sent to user.
     objectified = {},
@@ -109,7 +109,7 @@ function _deTokenize( arr ) {
       } catch ( e ) {}
     }
   }
-  return eval( tokens.join(' ') );
+  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
 }
 
 /**
