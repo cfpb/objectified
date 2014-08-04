@@ -26,9 +26,8 @@
     "casperjs": "~1.1.0-beta3"
   },
   "scripts": {
-    "test": "nodeunit test/cf-objectify-tests.js",
-    "browser": "mkdir -p dist && browserify index.js -s objectify -o dist/cf-objectify.js",
-    "browser-test": "browserify index.js -s objectify -o test/browser/cf-objectify.js && casperjs test test/browser/test.js"
+    "test": "./node_modules/.bin/browserify index.js -s objectify -o test/browser/cf-objectify.js && ./node_modules/.bin/casperjs test test/browser/test.js",
+    "browser": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s objectify -o dist/cf-objectify.js"
   },
   "dependencies": {
     "debounce": "~1.0.0",

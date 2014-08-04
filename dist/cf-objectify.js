@@ -109,7 +109,7 @@ function _deTokenize( arr ) {
       } catch ( e ) {}
     }
   }
-  return eval( tokens.join(' ') );
+  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
 }
 
 /**
