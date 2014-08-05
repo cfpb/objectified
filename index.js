@@ -5,7 +5,7 @@
  */
 
 var debounce = require('debounce'),
-    unformatUSD = require('unformat-usd');
+    unFormatUSD = require('unformat-usd');
 
 // The HTML attribute used for selecting inputs.
 var ATTR = 'cf-objectify';
@@ -22,10 +22,12 @@ var objectifier = {},
  * @param  {string|function} src String to tokenize. If it's a function, leave it.
  * @return {array}      Array of objects, each a token.
  */
-function _tokenize( src ) {
+function _tokenize( prop ) {
 
   var tokens = [],
-      patterns;
+      patterns,
+      src = prop.source,
+      datatype = prop.type;
 
   src = typeof src !== 'string' ? src : src.split(' ');
 
@@ -38,7 +40,8 @@ function _tokenize( src ) {
   function _pushToken( val, type ) {
     var token = {
       value: val,
-      type: type
+      type: type,
+      datatype: datatype
     };
     tokens.push( token );
   }
@@ -101,6 +104,11 @@ function _getDOMElement( str ) {
 function _deTokenize( arr ) {
   var el,
       tokens = [];
+
+  function _parseFloat( str ) {
+    return parseFloat( unFormatUSD(str) );
+  }
+
   for ( var i = 0, len = arr.length; i < len; i++ ) {
     var token = arr[i];
     // @TODO DRY this up.
@@ -111,9 +119,11 @@ function _deTokenize( arr ) {
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
-        el = _getDOMElement( arr[i].value );
+        el = _getDOMElement( token.value );
         // Grab the value or the placeholder or default to 0.
-        el = unformatUSD( el.value || el.getAttribute('placeholder') || 0 );
+        el = unFormatUSD( el.value || el.getAttribute('placeholder') || 0 );
+        // Make it a number if the user set a type of 'number'
+        el = token.datatype === 'number' ? _parseFloat(el) : el;
         tokens.push( el );
       } catch ( e ) {}
     }
@@ -122,7 +132,7 @@ function _deTokenize( arr ) {
   if ( typeof tokens[0] === 'function' ) {
     return tokens[0]();
   }
-  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
+  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens[0];
 }
 
 /**
@@ -130,8 +140,8 @@ function _deTokenize( arr ) {
  * @param  {[type]} source [description]
  * @return {[type]}        [description]
  */
-function _parseSource( source ) {
-  var src = _tokenize( source );
+function _parseSource( prop ) {
+  var src = _tokenize( prop );
   if ( src ) {
     return src;
   }
@@ -148,7 +158,7 @@ function objectify( props ) {
       len;
   for ( i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
-      objectifier[ props[i].name ] = _parseSource( props[i].source );
+      objectifier[ props[i].name ] = _parseSource( props[i] );
     } else {
       objectifier[ props[i].name ] = undefined;
     }
