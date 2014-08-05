@@ -54,7 +54,7 @@ function _tokenize( src ) {
     if ( patterns.operator.test(src[i]) ) {
       _pushToken( src[i].match(patterns.operator)[0], 'operator' );
     } else if ( patterns.number.test(src[i]) ) {
-      _pushToken( unformatUSD( src[i].match(patterns.number)[0] ), 'number' );
+      _pushToken( parseFloat( src[i].match(patterns.number)[0] ), 'number' );
     } else {
       _pushToken( src[i], 'name' );
     }
@@ -164,8 +164,11 @@ function objectify( props ) {
  * @return {[type]} [description]
  */
 function update() {
+  var val;
   for (var key in objectifier) {
-    objectified[ key ] = _deTokenize( objectifier[ key ] );
+    // @TODO Better handle safe defaults.
+    val = _deTokenize( objectifier[ key ] );
+    objectified[ key ] = val > 0 ? val : 0;
   }
 }
 
@@ -173,6 +176,7 @@ var controllers = document.querySelectorAll('[' + ATTR + ']'),
     len = controllers.length,
     i = 0;
 
+// @TODO Use event delegation and not this silliness.
 for ( ; i < len; i++ ) {
   controllers[i].addEventListener('change', update);
   controllers[i].addEventListener('keyup', debounce(update, 100));
