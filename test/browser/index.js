@@ -1,19 +1,23 @@
 var loan = objectify([
   {
     name: 'mincredit',
-    source: 'credit-score'
+    source: 'credit-score',
+    type: 'number'
   },
   {
     name: 'maxcredit',
-    source: 'credit-score + 20'
+    source: 'credit-score + 20',
+    type: 'number'
   },
   {
     name: 'price',
-    source: 'house-price'
+    source: 'house-price',
+    type: 'number'
   },
   {
     name: 'percent-down',
-    source: 'down-payment / house-price * 100'
+    source: 'down-payment / house-price * 100',
+    type: 'number'
   },
   {
     name: 'foo',
@@ -25,4 +29,4 @@ var loan = objectify([
 
 $('input').on('change keyup', debounce(function(){
   $('textarea').val( JSON.stringify(loan) );
-}, 300));
+}, 100));

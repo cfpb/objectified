@@ -26,7 +26,8 @@ function _tokenize( prop ) {
 
   var tokens = [],
       patterns,
-      src = prop.source;
+      src = prop.source,
+      datatype = prop.type;
 
   src = typeof src !== 'string' ? src : src.split(' ');
 
@@ -39,7 +40,8 @@ function _tokenize( prop ) {
   function _pushToken( val, type ) {
     var token = {
       value: val,
-      type: type
+      type: type,
+      datatype: datatype
     };
     tokens.push( token );
   }
@@ -101,7 +103,12 @@ function _getDOMElement( str ) {
  */
 function _deTokenize( arr ) {
   var el,
+      datatype = arr[0].datatype,
       tokens = [];
+
+  function _parseFloat( str ) {
+    return parseFloat( unFormatUSD(str) );
+  }
 
   for ( var i = 0, len = arr.length; i < len; i++ ) {
     var token = arr[i];
@@ -116,6 +123,8 @@ function _deTokenize( arr ) {
         el = _getDOMElement( token.value );
         // Grab the value or the placeholder or default to 0.
         el = unFormatUSD( el.value || el.getAttribute('placeholder') || 0 );
+        // Make it a number if the user set a type of 'number'
+        el = token.datatype === 'number' ? _parseFloat(el) : el;
         tokens.push( el );
       } catch ( e ) {}
     }
@@ -124,7 +133,8 @@ function _deTokenize( arr ) {
   if ( typeof tokens[0] === 'function' ) {
     return tokens[0]();
   }
-  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens[0];
+  var result = tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
+  return datatype === 'number' ? _parseFloat( result ) : result;
 }
 
 /**
