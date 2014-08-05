@@ -20,6 +20,10 @@ var loan = objectify([
     type: 'number'
   },
   {
+    name: 'loan-type',
+    source: 'loan-type'
+  },
+  {
     name: 'foo',
     source: function() {
       return $('input').length;

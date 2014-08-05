@@ -176,11 +176,9 @@ function objectify( props ) {
  * @return {[type]} [description]
  */
 function update() {
-  var val;
   for (var key in objectifier) {
     // @TODO Better handle safe defaults.
-    val = _deTokenize( objectifier[ key ] );
-    objectified[ key ] = val > 0 ? val : 0;
+    objectified[ key ] = _deTokenize( objectifier[key] );
   }
 }
 
