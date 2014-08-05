@@ -27,8 +27,7 @@ function _tokenize( prop ) {
 
   var tokens = [],
       patterns,
-      src = prop.source,
-      datatype = prop.type;
+      src = prop.source;
 
   src = typeof src !== 'string' ? src : src.split(' ');
 
@@ -41,8 +40,7 @@ function _tokenize( prop ) {
   function _pushToken( val, type ) {
     var token = {
       value: val,
-      type: type,
-      datatype: datatype
+      type: type
     };
     tokens.push( token );
   }
@@ -106,10 +104,6 @@ function _deTokenize( arr ) {
   var el,
       tokens = [];
 
-  function _parseFloat( str ) {
-    return parseFloat( unFormatUSD(str) );
-  }
-
   for ( var i = 0, len = arr.length; i < len; i++ ) {
     var token = arr[i];
     // @TODO DRY this up.
@@ -123,8 +117,6 @@ function _deTokenize( arr ) {
         el = _getDOMElement( token.value );
         // Grab the value or the placeholder or default to 0.
         el = unFormatUSD( el.value || el.getAttribute('placeholder') || 0 );
-        // Make it a number if the user set a type of 'number'
-        el = token.datatype === 'number' ? _parseFloat(el) : el;
         tokens.push( el );
       } catch ( e ) {}
     }
