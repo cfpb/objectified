@@ -26,8 +26,7 @@ function _tokenize( prop ) {
 
   var tokens = [],
       patterns,
-      src = prop.source,
-      datatype = prop.type;
+      src = prop.source;
 
   src = typeof src !== 'string' ? src : src.split(' ');
 
@@ -40,8 +39,7 @@ function _tokenize( prop ) {
   function _pushToken( val, type ) {
     var token = {
       value: val,
-      type: type,
-      datatype: datatype
+      type: type
     };
     tokens.push( token );
   }
@@ -102,8 +100,7 @@ function _getDOMElement( str ) {
  * @return {[type]}     [description]
  */
 function _deTokenize( arr ) {
-  var el,
-      datatype = arr[0].datatype,
+  var val,
       tokens = [];
 
   function _parseFloat( str ) {
@@ -120,12 +117,12 @@ function _deTokenize( arr ) {
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
-        el = _getDOMElement( token.value );
+        val = _getDOMElement( token.value );
         // Grab the value or the placeholder or default to 0.
-        el = unFormatUSD( el.value || el.getAttribute('placeholder') || 0 );
-        // Make it a number if the user set a type of 'number'
-        el = token.datatype === 'number' ? _parseFloat(el) : el;
-        tokens.push( el );
+        val = unFormatUSD( val.value || val.getAttribute('placeholder') || 0 );
+        // Make it a number if it's a number.
+        val = isNaN( val ) ? val : _parseFloat( val );
+        tokens.push( val );
       } catch ( e ) {}
     }
   }
@@ -133,8 +130,8 @@ function _deTokenize( arr ) {
   if ( typeof tokens[0] === 'function' ) {
     return tokens[0]();
   }
-  var result = tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
-  return datatype === 'number' ? _parseFloat( result ) : result;
+  val = tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
+  return isNaN( val ) ? val : _parseFloat( val );
 }
 
 /**
