@@ -65,16 +65,6 @@ function _tokenize( prop ) {
 }
 
 /**
- * _getDOMElementValue returns a reference to the element's value.
- * This needs to be modified to work with radios.
- * @param  {[type]} $el [description]
- * @return {[type]}     [description]
- */
-// function _getDOMElementValue( el ) {
-//   return el.value;
-// }
-
-/**
  * Returns the first element matching the provided string.
  * @param  {string} str Value to be provided to the selector.
  * @return {object}     Element object.
@@ -84,20 +74,10 @@ function _getDOMElement( str ) {
   return el ? el : null;
 }
 
-// down = [{
-//   type: "name"
-//   value: "house-price"
-// },{
-//   type: "operator"
-//   value: "-"
-// },{
-//   type: "name"
-//   value: "down-payment"
-// }]
 /**
- * [_deTokenize description]
- * @param  {[type]} arr [description]
- * @return {[type]}     [description]
+ * Process an array of tokens, returning a single value.
+ * @param  {array} arr Array of tokens created from _tokenize.
+ * @return {string|number} The value of the processed tokens.
  */
 function _deTokenize( arr ) {
   var val,
@@ -135,21 +115,8 @@ function _deTokenize( arr ) {
 }
 
 /**
- * [_parseSource description]
- * @param  {[type]} source [description]
- * @return {[type]}        [description]
- */
-function _parseSource( prop ) {
-  var src = _tokenize( prop );
-  if ( src ) {
-    return src;
-  }
-  return null;
-}
-
-/**
- * [update description]
- * @return {[type]} [description]
+ * Update the exported object
+ * @return {undefined}
  */
 function update() {
   for (var key in objectifier) {
@@ -159,16 +126,16 @@ function update() {
 }
 
 /**
- * [objectify description]
- * @param  {[type]} props [description]
- * @return {[type]}       [description]
+ * Constructor that processes the provided sources.
+ * @param  {array} props Array of objects
+ * @return {object} Returns a reference to the object that is periodically updated.
  */
 function objectify( props ) {
   var i,
       len;
   for ( i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
-      objectifier[ props[i].name ] = _parseSource( props[i] );
+      objectifier[ props[i].name ] = _tokenize( props[i] );
     } else {
       objectifier[ props[i].name ] = undefined;
     }
