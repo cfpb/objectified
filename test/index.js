@@ -1,23 +1,19 @@
 var loan = objectify([
   {
     name: 'mincredit',
-    source: 'credit-score',
-    type: 'number'
+    source: 'credit-score'
   },
   {
     name: 'maxcredit',
-    source: 'credit-score + 20',
-    type: 'number'
+    source: 'credit-score + 20'
   },
   {
     name: 'price',
-    source: 'house-price',
-    type: 'number'
+    source: 'house-price'
   },
   {
     name: 'percent-down',
-    source: 'down-payment / house-price * 100',
-    type: 'number'
+    source: 'down-payment / house-price * 100'
   },
   {
     name: 'loan-type',

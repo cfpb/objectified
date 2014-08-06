@@ -1,5 +1,5 @@
 /*
- * cf-objectify
+ * objectified
  *
  * A work of the public domain from the Consumer Financial Protection Bureau.
  */
@@ -8,7 +8,7 @@ var debounce = require('debounce'),
     unFormatUSD = require('unformat-usd');
 
 // The HTML attribute used for selecting inputs.
-var ATTR = 'cf-objectify';
+var ATTR = 'data-objectify';
 
     // Stores references to elements that will be monitored.
 var objectifier = {},
@@ -148,6 +148,17 @@ function _parseSource( prop ) {
 }
 
 /**
+ * [update description]
+ * @return {[type]} [description]
+ */
+function update() {
+  for (var key in objectifier) {
+    // @TODO Better handle safe defaults.
+    objectified[ key ] = _deTokenize( objectifier[key] );
+  }
+}
+
+/**
  * [objectify description]
  * @param  {[type]} props [description]
  * @return {[type]}       [description]
@@ -162,21 +173,8 @@ function objectify( props ) {
       objectifier[ props[i].name ] = undefined;
     }
   }
-  for ( i = 0, len = objectifier.length; i < len; i++ ) {
-
-  }
+  update();
   return objectified;
-}
-
-/**
- * [update description]
- * @return {[type]} [description]
- */
-function update() {
-  for (var key in objectifier) {
-    // @TODO Better handle safe defaults.
-    objectified[ key ] = _deTokenize( objectifier[key] );
-  }
 }
 
 var controllers = document.querySelectorAll('[' + ATTR + ']'),

@@ -44,11 +44,8 @@ node_modules/
 bower_components/
 src/vendor/
 
-# Grunt #
-#########
-.grunt/
-
-# Test reports #
-################
+# Test stuff #
+##############
 test/coverage
 test/junit
+.test.js

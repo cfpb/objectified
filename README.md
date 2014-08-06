@@ -1,29 +1,29 @@
-# cf-objectify [![Build Status](https://secure.travis-ci.org/cfpb/cf-objectify.png?branch=master)](http://travis-ci.org/cfpb/cf-objectify)
+# objectified [![Build Status](https://secure.travis-ci.org/cfpb/objectified.png?branch=master)](http://travis-ci.org/cfpb/objectified)
 
 > Bind HTML form elements to a JavaScript object.
 
 ## Installation
 
-Grab the `dist/cf-objectify.js` file and include it at the bottom of your page:
+Grab the `dist/objectified.js` file and include it at the bottom of your page:
 
 ```html
-<script src="cf-objectify.js"></script>
+<script src="objectified.js"></script>
 ```
 
 Or use [Browserify](http://browserify.org/):
 
 ```sh
-npm install cf-objectify --save
+npm install objectified --save
 ```
 
 ## Usage
 
-Add some HTML form elements to your page with a `cf-objectify` attribute, e.g.:
+Add some HTML form elements to your page with a `data-objectify` attribute, e.g.:
 
 ```html
-<input type="range" min="600" max="840" cf-objectify="credit-score">
-<input type="text" placeholder="400000" cf-objectify="house-price">
-<input type="text" placeholder="20000" cf-objectify="down-payment">
+<input type="range" min="600" max="840" value="700" data-objectify="credit-score">
+<input type="text" placeholder="400000" data-objectify="house-price">
+<input type="text" placeholder="20000" data-objectify="down-payment">
 ```
 Pass `objectify` an array of objects, each with a name and source property.
 
@@ -54,21 +54,16 @@ var loan = objectify([
 ]);
 ```
 
-Whenever the user changes any of the HTML form elements, the `loan` object will be updated accordingly.
-
-For example, if *credit-score* was slid to '700', '500000' was typed into the *house-price* field and '10000' was typed into *down-payment*, `console.log(loan)` would produce:
+You'll get:
 
 ```javascript
-{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":2,"viewport-width":705}
+> console.log(loan);
+{"mincredit":700,"maxcredit":720,"price":400000,"percent-down-payment":5,"viewport-width":705}
 ```
 
-Changing the *down-payment* field to '19000' results in:
+Changing any values in the HTML form will update the `loan` object.
 
-```javascript
-{"mincredit":700,"maxcredit":720,"price":500000,"percent-down-payment":3.8,"viewport-width":705}
-```
-
-The `name` property defines the object's keys while the `source` property binds a key's value to an HTML form element. `source` can optionally perform arithmetic operations to compute dynamic values. You can also provide a callback that will be called whenever a field is changed.
+The `name` property defines the object's keys while the `source` property binds the object's values to HTML form elements. `source` can optionally perform arithmetic operations to compute dynamic values. In place of a string, a function can be provided to return a value.
 
 ## Contributing
 

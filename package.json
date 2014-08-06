@@ -1,21 +1,21 @@
 {
-  "name": "cf-objectify",
+  "name": "objectified",
   "version": "0.2.0",
   "main": "index.js",
   "description": "One-way DOM-to-model data-binding.",
-  "homepage": "https://github.com/cfpb/cf-objectify",
-  "bugs": "https://github.com/cfpb/cf-objectify/issues",
+  "homepage": "https://github.com/cfpb/objectified",
+  "bugs": "https://github.com/cfpb/objectified/issues",
   "author": {
     "name": "Consumer Financial Protection Bureau",
     "url": "http://consumerfinance.gov"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cfpb/cf-objectify"
+    "url": "https://github.com/cfpb/objectified"
   },
   "license": "Public Domain",
   "keywords": [
-    "cf-objectify",
+    "objectified",
     "browserify",
     "data-binding",
     "form"
@@ -27,8 +27,8 @@
     "uglify-js": "~2.4.15"
   },
   "scripts": {
-    "test": "./node_modules/.bin/browserify index.js -s objectify -o test/browser/cf-objectify.js && ./node_modules/.bin/casperjs test test/browser/test.js",
-    "browser": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s objectify -o dist/cf-objectify.js && ./node_modules/.bin/uglifyjs dist/cf-objectify.js -m -c sequences,dead_code,conditionals,booleans,unused,if_return,join_vars,drop_console -o dist/cf-objectify.min.js"
+    "test": "./node_modules/.bin/browserify index.js -s objectify -o test/objectified.js && ./node_modules/.bin/casperjs test test/objectified-tests.js",
+    "browser": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s objectify -o dist/objectified.js && ./node_modules/.bin/uglifyjs dist/objectified.js -m -c sequences,dead_code,conditionals,booleans,unused,if_return,join_vars,drop_console -o dist/objectified.min.js"
   },
   "dependencies": {
     "debounce": "~1.0.0",

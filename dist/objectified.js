@@ -1,17 +1,15 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.objectify=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.objectified=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*
- * cf-objectify
+ * objectified
  *
  * A work of the public domain from the Consumer Financial Protection Bureau.
  */
 
-'use strict';
-
 var debounce = _dereq_('debounce'),
-    unformatUSD = _dereq_('unformat-usd');
+    unFormatUSD = _dereq_('unformat-usd');
 
 // The HTML attribute used for selecting inputs.
-var ATTR = 'cf-objectify';
+var ATTR = 'data-objectify';
 
     // Stores references to elements that will be monitored.
 var objectifier = {},
@@ -22,14 +20,16 @@ var objectifier = {},
 
 /**
  * Split source strings and taxonimize language.
- * @param  {string} str String to tokenize.
+ * @param  {string|function} src String to tokenize. If it's a function, leave it.
  * @return {array}      Array of objects, each a token.
  */
-function _tokenize( str ) {
+function _tokenize( prop ) {
 
-  var arr = str.split(' '),
-      tokens = [],
-      patterns;
+  var tokens = [],
+      patterns,
+      src = prop.source;
+
+  src = typeof src !== 'string' ? src : src.split(' ');
 
   patterns = {
     operator: /^[+\-\*\/\%]$/, // +-*/%
@@ -45,14 +45,20 @@ function _tokenize( str ) {
     tokens.push( token );
   }
 
+  // Return early if it's a function.
+  if ( typeof src === 'function' ) {
+    _pushToken( src, 'function' );
+    return tokens;
+  }
+
   // @TODO DRY this up.
-  for ( var i = 0, len = arr.length; i < len; i++ ) {
-    if ( patterns.operator.test(arr[i]) ) {
-      _pushToken( arr[i].match(patterns.operator)[0], 'operator' );
-    } else if ( patterns.number.test(arr[i]) ) {
-      _pushToken( unformatUSD( arr[i].match(patterns.number)[0] ), 'number' );
+  for ( var i = 0, len = src.length; i < len; i++ ) {
+    if ( patterns.operator.test(src[i]) ) {
+      _pushToken( src[i].match(patterns.operator)[0], 'operator' );
+    } else if ( patterns.number.test(src[i]) ) {
+      _pushToken( parseFloat( src[i].match(patterns.number)[0] ), 'number' );
     } else {
-      _pushToken( arr[i], 'name' );
+      _pushToken( src[i], 'name' );
     }
   }
   return tokens;
@@ -95,21 +101,38 @@ function _getDOMElement( str ) {
  * @return {[type]}     [description]
  */
 function _deTokenize( arr ) {
-  var el,
+  var val,
       tokens = [];
+
+  function _parseFloat( str ) {
+    return parseFloat( unFormatUSD(str) );
+  }
+
   for ( var i = 0, len = arr.length; i < len; i++ ) {
     var token = arr[i];
-    if ( token.type === 'operator' || token.type === 'number' ) {
+    // @TODO DRY this up.
+    if ( token.type === 'function' ) {
+      tokens.push( token.value );
+    } else if ( token.type === 'operator' || token.type === 'number' ) {
       tokens.push( token.value );
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
-        el = _getDOMElement( arr[i].value );
-        tokens.push( el.value || 0 );
+        val = _getDOMElement( token.value );
+        // Grab the value or the placeholder or default to 0.
+        val = unFormatUSD( val.value || val.getAttribute('placeholder') || 0 );
+        // Make it a number if it's a number.
+        val = isNaN( val ) ? val : _parseFloat( val );
+        tokens.push( val );
       } catch ( e ) {}
     }
   }
-  return tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
+  // @TODO This feels a little repetitive.
+  if ( typeof tokens[0] === 'function' ) {
+    return tokens[0]();
+  }
+  val = tokens.length > 1 ? eval( tokens.join(' ') ) : tokens.join(' ');
+  return isNaN( val ) ? val : _parseFloat( val );
 }
 
 /**
@@ -117,12 +140,23 @@ function _deTokenize( arr ) {
  * @param  {[type]} source [description]
  * @return {[type]}        [description]
  */
-function _parseSource( source ) {
-  var src = _tokenize( source );
+function _parseSource( prop ) {
+  var src = _tokenize( prop );
   if ( src ) {
     return src;
   }
   return null;
+}
+
+/**
+ * [update description]
+ * @return {[type]} [description]
+ */
+function update() {
+  for (var key in objectifier) {
+    // @TODO Better handle safe defaults.
+    objectified[ key ] = _deTokenize( objectifier[key] );
+  }
 }
 
 /**
@@ -135,31 +169,20 @@ function objectify( props ) {
       len;
   for ( i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
-      objectifier[ props[i].name ] = _parseSource( props[i].source );
+      objectifier[ props[i].name ] = _parseSource( props[i] );
     } else {
       objectifier[ props[i].name ] = undefined;
     }
   }
-  for ( i = 0, len = objectifier.length; i < len; i++ ) {
-
-  }
+  update();
   return objectified;
-}
-
-/**
- * [update description]
- * @return {[type]} [description]
- */
-function update() {
-  for (var key in objectifier) {
-    objectified[ key ] = _deTokenize( objectifier[ key ] );
-  }
 }
 
 var controllers = document.querySelectorAll('[' + ATTR + ']'),
     len = controllers.length,
     i = 0;
 
+// @TODO Use event delegation and not this silliness.
 for ( ; i < len; i++ ) {
   controllers[i].addEventListener('change', update);
   controllers[i].addEventListener('keyup', debounce(update, 100));

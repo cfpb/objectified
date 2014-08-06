@@ -10,10 +10,10 @@
     <body>
 
         <form action="" id="test">
-            credit score: <input type="range" min="600" max="840" step="20" value="700" name="credit-score" cf-objectify="credit-score"><br>
-            house price: <input type="text" placeholder="250,000" name="house-price" class="recalc" name="house-price" cf-objectify="house-price"><br>
-            down payment: <input type="text" placeholder="20,000" name="down-payment" class="recalc down-calc" id="down-payment" name="down-payment" cf-objectify="down-payment"><br>
-            loan type: <select cf-objectify="loan-type" name="loan-type">
+            credit score: <input type="range" min="600" max="840" step="20" value="700" name="credit-score" data-objectify="credit-score"><br>
+            house price: <input type="text" placeholder="250,000" name="house-price" class="recalc" name="house-price" data-objectify="house-price"><br>
+            down payment: <input type="text" placeholder="20,000" name="down-payment" class="recalc down-calc" id="down-payment" name="down-payment" data-objectify="down-payment"><br>
+            loan type: <select data-objectify="loan-type" name="loan-type">
               <option value="conf">Conventional</option>
               <option value="fha">FHA</option>
               <option value="va">VA</option>
@@ -24,7 +24,7 @@
 
         <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="https://rawgit.com/jdarling/Object.observe/master/Object.observe.poly.js"></script>
-        <script src="cf-objectify.js"></script>
+        <script src="objectified.js"></script>
         <script src="helpers.js"></script>
         <script src="index.js"></script>
 
