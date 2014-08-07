@@ -5,6 +5,7 @@
  */
 
 var debounce = require('debounce'),
+    domReady = require('domready');
     unFormatUSD = require('unformat-usd');
 
 // The HTML attribute used for selecting inputs.
@@ -119,7 +120,7 @@ function _deTokenize( arr ) {
  * @return {undefined}
  */
 function update() {
-  for (var key in objectifier) {
+  for ( var key in objectifier ) {
     // @TODO Better handle safe defaults.
     objectified[ key ] = _deTokenize( objectifier[key] );
   }
@@ -140,7 +141,6 @@ function objectify( props ) {
       objectifier[ props[i].name ] = undefined;
     }
   }
-  update();
   return objectified;
 }
 
@@ -153,6 +153,9 @@ for ( ; i < len; i++ ) {
   controllers[i].addEventListener('change', update);
   controllers[i].addEventListener('keyup', debounce(update, 100));
 }
+
+// Update when the form elements are loaded.
+domReady(update);
 
 module.exports = objectify;
 module.exports.update = update;

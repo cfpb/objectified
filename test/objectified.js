@@ -6,6 +6,7 @@
  */
 
 var debounce = _dereq_('debounce'),
+    domReady = _dereq_('domready');
     unFormatUSD = _dereq_('unformat-usd');
 
 // The HTML attribute used for selecting inputs.
@@ -120,7 +121,7 @@ function _deTokenize( arr ) {
  * @return {undefined}
  */
 function update() {
-  for (var key in objectifier) {
+  for ( var key in objectifier ) {
     // @TODO Better handle safe defaults.
     objectified[ key ] = _deTokenize( objectifier[key] );
   }
@@ -141,7 +142,6 @@ function objectify( props ) {
       objectifier[ props[i].name ] = undefined;
     }
   }
-  update();
   return objectified;
 }
 
@@ -155,9 +155,12 @@ for ( ; i < len; i++ ) {
   controllers[i].addEventListener('keyup', debounce(update, 100));
 }
 
+// Update when the form elements are loaded.
+domReady(update);
+
 module.exports = objectify;
 module.exports.update = update;
-},{"debounce":2,"unformat-usd":4}],2:[function(_dereq_,module,exports){
+},{"debounce":2,"domready":4,"unformat-usd":5}],2:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -220,6 +223,63 @@ function now() {
 }
 
 },{}],4:[function(_dereq_,module,exports){
+/*!
+  * domready (c) Dustin Diaz 2012 - License MIT
+  */
+!function (name, definition) {
+  if (typeof module != 'undefined') module.exports = definition()
+  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+  else this[name] = definition()
+}('domready', function (ready) {
+
+  var fns = [], fn, f = false
+    , doc = document
+    , testEl = doc.documentElement
+    , hack = testEl.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , addEventListener = 'addEventListener'
+    , onreadystatechange = 'onreadystatechange'
+    , readyState = 'readyState'
+    , loadedRgx = hack ? /^loaded|^c/ : /^loaded|c/
+    , loaded = loadedRgx.test(doc[readyState])
+
+  function flush(f) {
+    loaded = 1
+    while (f = fns.shift()) f()
+  }
+
+  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+    doc.removeEventListener(domContentLoaded, fn, f)
+    flush()
+  }, f)
+
+
+  hack && doc.attachEvent(onreadystatechange, fn = function () {
+    if (/^c/.test(doc[readyState])) {
+      doc.detachEvent(onreadystatechange, fn)
+      flush()
+    }
+  })
+
+  return (ready = hack ?
+    function (fn) {
+      self != top ?
+        loaded ? fn() : fns.push(fn) :
+        function () {
+          try {
+            testEl.doScroll('left')
+          } catch (e) {
+            return setTimeout(function() { ready(fn) }, 50)
+          }
+          fn()
+        }()
+    } :
+    function (fn) {
+      loaded ? fn() : fns.push(fn)
+    })
+})
+
+},{}],5:[function(_dereq_,module,exports){
 /**
  * @param  {string} str  USD-formatted string to be converted into a number.
  * @return {string}      The converted number OR the original argument if a 

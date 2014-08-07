@@ -24,6 +24,12 @@ var loan = objectify([
     source: function() {
       return $('input').length;
     }
+  },
+  {
+    name: 'meta',
+    source: function() {
+      return loan['percent-down'] * 2;
+    }
   }
 ]);
 

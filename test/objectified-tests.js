@@ -9,7 +9,7 @@ casper.test.begin('Main page test', 12, function suite(test) {
         this.sendKeys('[name=house-price]', '400000');
         test.assertField('house-price', '400000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":5,\"loan-type\":\"conf\",\"foo\":3}');
+            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":5,\"loan-type\":\"conf\",\"foo\":3,\"meta\":10}');
         });
     });
 
@@ -17,7 +17,7 @@ casper.test.begin('Main page test', 12, function suite(test) {
         this.sendKeys('[name=down-payment]', '10000');
         test.assertField('down-payment', '10000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":2.5,\"loan-type\":\"conf\",\"foo\":3}');
+            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":2.5,\"loan-type\":\"conf\",\"foo\":3,\"meta\":5}');
         });
     });
 
@@ -28,7 +28,7 @@ casper.test.begin('Main page test', 12, function suite(test) {
         this.sendKeys('[name=down-payment]', '4000');
         test.assertField('down-payment', '4000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":1,\"loan-type\":\"conf\",\"foo\":3}');
+            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":1,\"loan-type\":\"conf\",\"foo\":3,\"meta\":2}');
         });
     });
 
@@ -39,7 +39,7 @@ casper.test.begin('Main page test', 12, function suite(test) {
         this.sendKeys('[name=down-payment]', '$4,000');
         test.assertField('down-payment', '$4,000');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":1,\"loan-type\":\"conf\",\"foo\":3}');
+            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":1,\"loan-type\":\"conf\",\"foo\":3,\"meta\":2}');
         });
     });
 
@@ -50,7 +50,7 @@ casper.test.begin('Main page test', 12, function suite(test) {
         }, false);
         test.assertField('loan-type', 'fha');
         this.wait(400, function() {
-            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":5,\"loan-type\":\"fha\",\"foo\":3}');
+            test.assertField('console', '{\"mincredit\":700,\"maxcredit\":720,\"price\":400000,\"percent-down\":5,\"loan-type\":\"fha\",\"foo\":3,\"meta\":10}');
         });
     });
 
