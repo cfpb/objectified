@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "debounce": "~1.0.0",
-    "unformat-usd": "~0.1.1",
-    "domready": "~0.3.0"
+    "unformat-usd": "~0.1.1"
   }
 }

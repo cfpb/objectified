@@ -6,18 +6,10 @@
  */
 
 var debounce = _dereq_('debounce'),
-    domReady = _dereq_('domready');
     unFormatUSD = _dereq_('unformat-usd');
 
-// The container element provided by the user.
-var $container;
-
-    // Stores references to elements that will be monitored.
-var objectifier = {},
-    // Stores final values that are sent to user.
-    objectified = {},
-    // @TODO Use this object to cache references to elements.
-    cachedElements = {};
+// @TODO Use this object to cache references to elements.
+var cachedElements = {};
 
 /**
  * Split source strings and taxonimize language.
@@ -68,20 +60,22 @@ function _tokenize( prop ) {
 
 /**
  * Returns the first element matching the provided string.
+ * @param  {object} container DOM element node of parent container.
  * @param  {string} str Value to be provided to the selector.
  * @return {object}     Element object.
  */
-function _getDOMElement( str ) {
-  var el = $container.querySelector( '[name=' + str + ']' );
+function _getDOMElement( container, str ) {
+  var el = container.querySelector( '[name=' + str + ']' );
   return el ? el : null;
 }
 
 /**
  * Process an array of tokens, returning a single value.
+ * @param  {object} container DOM element node of parent container.
  * @param  {array} arr Array of tokens created from _tokenize.
  * @return {string|number} The value of the processed tokens.
  */
-function _deTokenize( arr ) {
+function _deTokenize( container, arr ) {
   var val,
       tokens = [];
 
@@ -99,7 +93,7 @@ function _deTokenize( arr ) {
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
-        val = _getDOMElement( token.value );
+        val = _getDOMElement( container, token.value );
         // Grab the value or the placeholder or default to 0.
         val = unFormatUSD( val.value || val.getAttribute('placeholder') || 0 );
         // Make it a number if it's a number.
@@ -118,12 +112,15 @@ function _deTokenize( arr ) {
 
 /**
  * Update the exported object
+ * @param  {object} container DOM element node of parent container.
+ * @param {object} src Tokenize source object.
+ * @param {object} dest Object to be updated.
  * @return {undefined}
  */
-function update() {
-  for ( var key in objectifier ) {
+function update( container, src, dest ) {
+  for ( var key in src ) {
     // @TODO Better handle safe defaults.
-    objectified[ key ] = _deTokenize( objectifier[key] );
+    dest[ key ] = _deTokenize( container, src[key] );
   }
 }
 
@@ -133,12 +130,14 @@ function update() {
  * @return {object} Returns a reference to the object that is periodically updated.
  */
 function objectify( id, props ) {
-  var i,
-      len;
 
-  $container = document.querySelector( id );
+      // Stores references to elements that will be monitored.
+  var objectifier = {},
+      // Stores final values that are sent to user.
+      objectified = {},
+      container = document.querySelector( id );
 
-  for ( i = 0, len = props.length; i < len; i++ ) {
+  for ( var i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
       objectifier[ props[i].name ] = _tokenize( props[i] );
     } else {
@@ -146,31 +145,33 @@ function objectify( id, props ) {
     }
   }
 
-  setListeners();
+  function _update() {
+    update( container, objectifier, objectified );
+  }
+
+  setListeners( container, _update );
+
+  objectified.update = _update;
 
   return objectified;
 }
 
-function setListeners() {
+function setListeners( container, cb ) {
 
-  var controllers = $container.querySelectorAll('[name]'),
+  var controllers = container.querySelectorAll('[name]'),
       len = controllers.length,
       i = 0;
 
   // @TODO Use event delegation and not this silliness.
   for ( ; i < len; i++ ) {
-    controllers[i].addEventListener('change', update);
-    controllers[i].addEventListener('keyup', debounce(update, 100));
+    controllers[i].addEventListener('change', cb);
+    controllers[i].addEventListener('keyup', debounce(cb, 100));
   }
 
 }
 
-// Update when the form elements are loaded.
-domReady( update );
-
 module.exports = objectify;
-module.exports.update = update;
-},{"debounce":2,"domready":4,"unformat-usd":5}],2:[function(_dereq_,module,exports){
+},{"debounce":2,"unformat-usd":4}],2:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -233,63 +234,6 @@ function now() {
 }
 
 },{}],4:[function(_dereq_,module,exports){
-/*!
-  * domready (c) Dustin Diaz 2012 - License MIT
-  */
-!function (name, definition) {
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else this[name] = definition()
-}('domready', function (ready) {
-
-  var fns = [], fn, f = false
-    , doc = document
-    , testEl = doc.documentElement
-    , hack = testEl.doScroll
-    , domContentLoaded = 'DOMContentLoaded'
-    , addEventListener = 'addEventListener'
-    , onreadystatechange = 'onreadystatechange'
-    , readyState = 'readyState'
-    , loadedRgx = hack ? /^loaded|^c/ : /^loaded|c/
-    , loaded = loadedRgx.test(doc[readyState])
-
-  function flush(f) {
-    loaded = 1
-    while (f = fns.shift()) f()
-  }
-
-  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
-    doc.removeEventListener(domContentLoaded, fn, f)
-    flush()
-  }, f)
-
-
-  hack && doc.attachEvent(onreadystatechange, fn = function () {
-    if (/^c/.test(doc[readyState])) {
-      doc.detachEvent(onreadystatechange, fn)
-      flush()
-    }
-  })
-
-  return (ready = hack ?
-    function (fn) {
-      self != top ?
-        loaded ? fn() : fns.push(fn) :
-        function () {
-          try {
-            testEl.doScroll('left')
-          } catch (e) {
-            return setTimeout(function() { ready(fn) }, 50)
-          }
-          fn()
-        }()
-    } :
-    function (fn) {
-      loaded ? fn() : fns.push(fn)
-    })
-})
-
-},{}],5:[function(_dereq_,module,exports){
 /**
  * @param  {string} str  USD-formatted string to be converted into a number.
  * @return {string}      The converted number OR the original argument if a 

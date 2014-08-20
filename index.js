@@ -5,11 +5,7 @@
  */
 
 var debounce = require('debounce'),
-    domReady = require('domready');
     unFormatUSD = require('unformat-usd');
-
-// The container element provided by the user.
-var $container;
 
 // @TODO Use this object to cache references to elements.
 var cachedElements = {};
@@ -63,20 +59,22 @@ function _tokenize( prop ) {
 
 /**
  * Returns the first element matching the provided string.
+ * @param  {object} container DOM element node of parent container.
  * @param  {string} str Value to be provided to the selector.
  * @return {object}     Element object.
  */
-function _getDOMElement( str ) {
-  var el = $container.querySelector( '[name=' + str + ']' );
+function _getDOMElement( container, str ) {
+  var el = container.querySelector( '[name=' + str + ']' );
   return el ? el : null;
 }
 
 /**
  * Process an array of tokens, returning a single value.
+ * @param  {object} container DOM element node of parent container.
  * @param  {array} arr Array of tokens created from _tokenize.
  * @return {string|number} The value of the processed tokens.
  */
-function _deTokenize( arr ) {
+function _deTokenize( container, arr ) {
   var val,
       tokens = [];
 
@@ -94,7 +92,7 @@ function _deTokenize( arr ) {
     } else {
       try {
         // @TODO accommodate radio and other elements that don't use .value
-        val = _getDOMElement( token.value );
+        val = _getDOMElement( container, token.value );
         // Grab the value or the placeholder or default to 0.
         val = unFormatUSD( val.value || val.getAttribute('placeholder') || 0 );
         // Make it a number if it's a number.
@@ -112,6 +110,20 @@ function _deTokenize( arr ) {
 }
 
 /**
+ * Update the exported object
+ * @param  {object} container DOM element node of parent container.
+ * @param {object} src Tokenize source object.
+ * @param {object} dest Object to be updated.
+ * @return {undefined}
+ */
+function update( container, src, dest ) {
+  for ( var key in src ) {
+    // @TODO Better handle safe defaults.
+    dest[ key ] = _deTokenize( container, src[key] );
+  }
+}
+
+/**
  * Constructor that processes the provided sources.
  * @param  {array} props Array of objects
  * @return {object} Returns a reference to the object that is periodically updated.
@@ -121,9 +133,8 @@ function objectify( id, props ) {
       // Stores references to elements that will be monitored.
   var objectifier = {},
       // Stores final values that are sent to user.
-      objectified = {};
-
-  $container = document.querySelector( id );
+      objectified = {},
+      container = document.querySelector( id );
 
   for ( var i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
@@ -134,26 +145,19 @@ function objectify( id, props ) {
   }
 
   function _update() {
-    for ( var key in objectifier ) {
-      // @TODO Better handle safe defaults.
-      objectified[ key ] = _deTokenize( objectifier[key] );
-    }
+    update( container, objectifier, objectified );
   }
 
-  
-  // Update when the form elements are loaded.
-  domReady( _update );
-
-  setListeners( _update );
+  setListeners( container, _update );
 
   objectified.update = _update;
 
   return objectified;
 }
 
-function setListeners( cb ) {
+function setListeners( container, cb ) {
 
-  var controllers = $container.querySelectorAll('[name]'),
+  var controllers = container.querySelectorAll('[name]'),
       len = controllers.length,
       i = 0;
 
