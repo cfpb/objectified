@@ -9,8 +9,8 @@ var debounce = _dereq_('debounce'),
     domReady = _dereq_('domready');
     unFormatUSD = _dereq_('unformat-usd');
 
-// The HTML attribute used for selecting inputs.
-var ATTR = 'data-objectify';
+// The container element provided by the user.
+var $container;
 
     // Stores references to elements that will be monitored.
 var objectifier = {},
@@ -72,7 +72,7 @@ function _tokenize( prop ) {
  * @return {object}     Element object.
  */
 function _getDOMElement( str ) {
-  var el = document.querySelector( '[' + ATTR + '=' + str + ']' );
+  var el = $container.querySelector( '[name=' + str + ']' );
   return el ? el : null;
 }
 
@@ -132,9 +132,12 @@ function update() {
  * @param  {array} props Array of objects
  * @return {object} Returns a reference to the object that is periodically updated.
  */
-function objectify( props ) {
+function objectify( id, props ) {
   var i,
       len;
+
+  $container = document.querySelector( id );
+
   for ( i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
       objectifier[ props[i].name ] = _tokenize( props[i] );
@@ -142,21 +145,28 @@ function objectify( props ) {
       objectifier[ props[i].name ] = undefined;
     }
   }
+
+  setListeners();
+
   return objectified;
 }
 
-var controllers = document.querySelectorAll('[' + ATTR + ']'),
-    len = controllers.length,
-    i = 0;
+function setListeners() {
 
-// @TODO Use event delegation and not this silliness.
-for ( ; i < len; i++ ) {
-  controllers[i].addEventListener('change', update);
-  controllers[i].addEventListener('keyup', debounce(update, 100));
+  var controllers = $container.querySelectorAll('[name]'),
+      len = controllers.length,
+      i = 0;
+
+  // @TODO Use event delegation and not this silliness.
+  for ( ; i < len; i++ ) {
+    controllers[i].addEventListener('change', update);
+    controllers[i].addEventListener('keyup', debounce(update, 100));
+  }
+
 }
 
 // Update when the form elements are loaded.
-domReady(update);
+domReady( update );
 
 module.exports = objectify;
 module.exports.update = update;

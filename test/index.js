@@ -1,4 +1,4 @@
-var loan = objectify([
+var loan = objectify('#test',[
   {
     name: 'mincredit',
     source: 'credit-score'

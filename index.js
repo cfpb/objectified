@@ -8,15 +8,11 @@ var debounce = require('debounce'),
     domReady = require('domready');
     unFormatUSD = require('unformat-usd');
 
-// The HTML attribute used for selecting inputs.
-var ATTR = 'data-objectify';
+// The container element provided by the user.
+var $container;
 
-    // Stores references to elements that will be monitored.
-var objectifier = {},
-    // Stores final values that are sent to user.
-    objectified = {},
-    // @TODO Use this object to cache references to elements.
-    cachedElements = {};
+// @TODO Use this object to cache references to elements.
+var cachedElements = {};
 
 /**
  * Split source strings and taxonimize language.
@@ -71,7 +67,7 @@ function _tokenize( prop ) {
  * @return {object}     Element object.
  */
 function _getDOMElement( str ) {
-  var el = document.querySelector( '[' + ATTR + '=' + str + ']' );
+  var el = $container.querySelector( '[name=' + str + ']' );
   return el ? el : null;
 }
 
@@ -119,10 +115,10 @@ function _deTokenize( arr ) {
  * Update the exported object
  * @return {undefined}
  */
-function update() {
-  for ( var key in objectifier ) {
+function update( src, dest ) {
+  for ( var key in src ) {
     // @TODO Better handle safe defaults.
-    objectified[ key ] = _deTokenize( objectifier[key] );
+    dest[ key ] = _deTokenize( src[key] );
   }
 }
 
@@ -131,31 +127,46 @@ function update() {
  * @param  {array} props Array of objects
  * @return {object} Returns a reference to the object that is periodically updated.
  */
-function objectify( props ) {
-  var i,
-      len;
-  for ( i = 0, len = props.length; i < len; i++ ) {
+function objectify( id, props ) {
+
+      // Stores references to elements that will be monitored.
+  var objectifier = {},
+      // Stores final values that are sent to user.
+      objectified = {};
+
+  $container = document.querySelector( id );
+
+  for ( var i = 0, len = props.length; i < len; i++ ) {
     if ( props[i].hasOwnProperty('source') ) {
       objectifier[ props[i].name ] = _tokenize( props[i] );
     } else {
       objectifier[ props[i].name ] = undefined;
     }
   }
+
+  setListeners(function(){
+    update( objectifier, objectified );
+  });
+
   return objectified;
 }
 
-var controllers = document.querySelectorAll('[' + ATTR + ']'),
-    len = controllers.length,
-    i = 0;
+function setListeners( cb ) {
 
-// @TODO Use event delegation and not this silliness.
-for ( ; i < len; i++ ) {
-  controllers[i].addEventListener('change', update);
-  controllers[i].addEventListener('keyup', debounce(update, 100));
+  var controllers = $container.querySelectorAll('[name]'),
+      len = controllers.length,
+      i = 0;
+
+  // @TODO Use event delegation and not this silliness.
+  for ( ; i < len; i++ ) {
+    controllers[i].addEventListener('change', cb);
+    controllers[i].addEventListener('keyup', debounce(cb, 100));
+  }
+
 }
 
 // Update when the form elements are loaded.
-domReady(update);
+domReady( update );
 
 module.exports = objectify;
 module.exports.update = update;
