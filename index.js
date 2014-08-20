@@ -112,17 +112,6 @@ function _deTokenize( arr ) {
 }
 
 /**
- * Update the exported object
- * @return {undefined}
- */
-function update( src, dest ) {
-  for ( var key in src ) {
-    // @TODO Better handle safe defaults.
-    dest[ key ] = _deTokenize( src[key] );
-  }
-}
-
-/**
  * Constructor that processes the provided sources.
  * @param  {array} props Array of objects
  * @return {object} Returns a reference to the object that is periodically updated.
@@ -144,9 +133,20 @@ function objectify( id, props ) {
     }
   }
 
-  setListeners(function(){
-    update( objectifier, objectified );
-  });
+  function _update() {
+    for ( var key in objectifier ) {
+      // @TODO Better handle safe defaults.
+      objectified[ key ] = _deTokenize( objectifier[key] );
+    }
+  }
+
+  
+  // Update when the form elements are loaded.
+  domReady( _update );
+
+  setListeners( _update );
+
+  objectified.update = _update;
 
   return objectified;
 }
@@ -165,8 +165,4 @@ function setListeners( cb ) {
 
 }
 
-// Update when the form elements are loaded.
-domReady( update );
-
 module.exports = objectify;
-module.exports.update = update;
