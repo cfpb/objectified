@@ -18,17 +18,19 @@ npm install objectified --save
 
 ## Usage
 
-Add some HTML form elements to your page with a `data-objectify` attribute, e.g.:
+Add some HTML form elements to your page, e.g.:
 
 ```html
-<input type="range" min="600" max="840" value="700" data-objectify="credit-score">
-<input type="text" placeholder="400000" data-objectify="house-price">
-<input type="text" placeholder="20000" data-objectify="down-payment">
+<form id="mortgage">
+  <input type="range" min="600" max="840" value="700" name="credit-score">
+  <input type="text" placeholder="400000" name="house-price">
+  <input type="text" placeholder="20000" name="down-payment">
+</form>
 ```
-Pass `objectify` an array of objects, each with a name and source property.
+Pass `objectify` a container selector (such as the form's id) and an array of objects, each with a name and source property.
 
 ```javascript
-var loan = objectify([
+var loan = objectify('#mortgage', [
   {
     name: 'mincredit',
     source: 'credit-score'
