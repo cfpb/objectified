@@ -1,6 +1,6 @@
 {
   "name": "objectified",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "index.js",
   "description": "One-way DOM-to-model data-binding.",
   "homepage": "https://github.com/cfpb/objectified",
