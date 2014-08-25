@@ -8,8 +8,9 @@
 var debounce = _dereq_('debounce'),
     unFormatUSD = _dereq_('unformat-usd');
 
-// @TODO Use this object to cache references to elements.
-var cachedElements = {};
+var jQueryIsPresent = typeof jQuery !== 'undefined',
+    // @TODO Use this object to cache references to elements.
+    cachedElements = {};
 
 /**
  * Split source strings and taxonimize language.
@@ -158,7 +159,8 @@ function objectify( id, props ) {
 
 function setListeners( container, cb ) {
 
-  var controllers = container.querySelectorAll('[name]'),
+  // IE8 doesn't support querySelectorAll so use jQuery if possible.
+  var controllers = jQueryIsPresent ? $( container ).find( '[name]' ) : container.querySelectorAll( '[name]' ),
       len = controllers.length,
       i = 0;
 

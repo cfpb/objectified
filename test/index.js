@@ -1,3 +1,5 @@
+var els = document.getElementsByTagName('input');
+
 var loan = objectify('#test',[
   {
     name: 'mincredit',
@@ -22,7 +24,7 @@ var loan = objectify('#test',[
   {
     name: 'foo',
     source: function() {
-      return $('input').length;
+      return els.length;
     }
   },
   {
@@ -33,6 +35,11 @@ var loan = objectify('#test',[
   }
 ]);
 
-$('input').on('change keyup', debounce(function(){
-  $('textarea').val( JSON.stringify(loan) );
-}, 100));
+for ( var i = 0, len = els.length; i < len; i++ ) {
+  els[i].addEventListener('keyup', debounce(function logResult() {
+    document.getElementById('console').value = JSON.stringify( loan );
+  }, 100));
+  els[i].addEventListener('change', debounce(function logResult() {
+    document.getElementById('console').value = JSON.stringify( loan );
+  }, 100));
+}
