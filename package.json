@@ -27,8 +27,8 @@
     "uglify-js": "~2.4.15"
   },
   "scripts": {
-    "test": "./node_modules/.bin/browserify index.js -s objectify -o test/objectified.js && ./node_modules/.bin/casperjs test test/objectified-tests.js",
-    "browser": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s objectify -o dist/objectified.js && ./node_modules/.bin/uglifyjs dist/objectified.js -m -c sequences,dead_code,conditionals,booleans,unused,if_return,join_vars,drop_console -o dist/objectified.min.js"
+    "test": "browserify index.js -s objectify -o test/objectified.js && casperjs test test/objectified-tests.js",
+    "browser": "mkdir -p dist && browserify index.js -s objectify -o dist/objectified.js && uglifyjs dist/objectified.js -m -c sequences,dead_code,conditionals,booleans,unused,if_return,join_vars,drop_console -o dist/objectified.min.js"
   },
   "dependencies": {
     "debounce": "~1.0.0",
