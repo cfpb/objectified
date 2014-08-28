@@ -166,7 +166,7 @@ function setListeners( container, cb ) {
   // @TODO Use event delegation and not this silliness.
   for ( ; i < len; i++ ) {
     controllers[i].addEventListener('change', cb);
-    controllers[i].addEventListener('keyup', debounce(cb, 100));
+    controllers[i].addEventListener('keyup', debounce(cb, 50));
   }
 
 }

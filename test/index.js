@@ -38,8 +38,8 @@ var loan = objectify('#test',[
 for ( var i = 0, len = els.length; i < len; i++ ) {
   els[i].addEventListener('keyup', debounce(function logResult() {
     document.getElementById('console').value = JSON.stringify( loan );
-  }, 100));
+  }, 200));
   els[i].addEventListener('change', debounce(function logResult() {
     document.getElementById('console').value = JSON.stringify( loan );
-  }, 100));
+  }, 200));
 }
