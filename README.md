@@ -1,4 +1,10 @@
-# objectified [![Build Status](https://secure.travis-ci.org/cfpb/objectified.png?branch=master)](http://travis-ci.org/cfpb/objectified)
+:warning: This project is archived and no longer maintained :warning: 
+
+---
+---
+---
+
+# objectified 
 
 > Bind HTML form elements to a JavaScript object.
 
